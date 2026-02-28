@@ -1,0 +1,42 @@
+model OutreachOpportunity {
+  id            String   @id @default(cuid())
+  source        Source
+  title         String
+  url           String   @unique
+  author        String?  
+  score         Int
+  reason        String
+  matchedQuery  String
+  status        Status   @default(NEW)
+  postedUrl     String?  
+  notes         String?  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  outreachDrafts OutreachDraft[]
+}
+
+model OutreachDraft {
+  id            String   @id @default(cuid())
+  opportunityId String
+  kind          String
+  draftText     String   @db.Text
+  callToAction  String?  
+  confidence     Int      @default(0) @db.Integer
+  createdAt     DateTime @default(now())
+
+  outreachOpportunity OutreachOpportunity @relation(fields: [opportunityId], references: [id])
+}
+
+enum Source {
+  hn
+  github
+  devto
+}
+
+enum Status {
+  NEW
+  REVIEWED
+  POSTED
+  SKIPPED
+}
